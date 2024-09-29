@@ -1,0 +1,13 @@
+*~
+*.sw[mnpcod]
+.DS_Store
+Thumbs.db
+.tmp
+*.tmp
+*.tmp.*
+*.log
+log.txt
+npm-debug.log*
+node_modules
+test
+coverage/tmp
