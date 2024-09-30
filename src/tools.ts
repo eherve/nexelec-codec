@@ -1,5 +1,31 @@
 /** @format */
 
+export enum PeriodUnit {
+  MINUTE = 'minute',
+}
+
+export enum RecordUnit {
+  TEMPERATURE = '°C',
+  HUMIDITY = '%RH',
+  CO2 = 'ppm',
+  COVT = 'ug/m3',
+  LUMINOSITY = 'lux',
+  NOISE = 'db',
+  PERCENTAGE = '%',
+}
+
+export type SensorStatus = 'enabled' | 'disabled' | 'not-present' | 'error';
+
+export type PayloadEncoding = 'hex' | 'base64';
+
+export type DecodeOptions = {
+  encoding: PayloadEncoding;
+};
+
+export type EncodeOptions = {
+  encoding: PayloadEncoding;
+};
+
 export function hexToBase64(source: string): string {
   return btoa(String.fromCharCode(...source.match(/.{2}/g)!.map(c => parseInt(c, 16))));
 }

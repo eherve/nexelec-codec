@@ -1,8 +1,7 @@
 /** @format */
 
-import {min, values} from 'lodash';
 import {DownlinkCommand, DownlinkCommands, DownlinkId} from './downlink-command';
-import {base64ToHex} from './tools';
+import {base64ToHex, DecodeOptions, EncodeOptions, hexToBase64} from './tools';
 
 type BaseDecodedDownlinkValue = {
   id: string;
@@ -102,9 +101,18 @@ function buildDecodedValue(command: DownlinkCommand, value: boolean | number): D
   }
 }
 
-export function decodeFromHex(hex: string): DecodedDownlink {
-  const payload = hex.toLowerCase();
-  const code = hex.substring(0, 2);
+function getDecodePayload(data: string, {encoding}: DecodeOptions): string {
+  switch (encoding) {
+    case 'hex':
+      return data.toLowerCase();
+    case 'base64':
+      return base64ToHex(data).toLowerCase();
+  }
+}
+
+export function decodeDownlink(data: string, options: DecodeOptions = {encoding: 'hex'}): DecodedDownlink {
+  const payload = getDecodePayload(data, options);
+  const code = payload.substring(0, 2);
   if (code !== '55') throw new Error(`invalid first byte "${code}"`);
   const decoded: DecodedDownlink = [];
   let index = 2;
@@ -116,10 +124,6 @@ export function decodeFromHex(hex: string): DecodedDownlink {
     decoded.push(buildDecodedValue(command, value));
   }
   return decoded;
-}
-
-export function decodeFromBase64(base64: string): DecodedDownlink {
-  return decodeFromHex(base64ToHex(base64));
 }
 
 function getHexCommandValue(command: DownlinkCommand, value: any): string {
@@ -163,12 +167,25 @@ function getHexCommandValue(command: DownlinkCommand, value: any): string {
   throw new Error(`invalid command ${command.id} value: "${value}"`);
 }
 
-export function encodeToHex(data: {id: DownlinkId; value?: any}[]): string {
+function getEncodePayload(data: string, {encoding}: EncodeOptions): string {
+  switch (encoding) {
+    case 'hex':
+      return data;
+    case 'base64':
+      return hexToBase64(data);
+  }
+}
+
+export function encodeDownlink(
+  data: {id: DownlinkId; value?: any}[],
+  options: EncodeOptions = {encoding: 'hex'}
+): string {
   let payload = '55';
   data.forEach(d => {
     const command = getCommand(d.id);
     const value = getHexCommandValue(command, d.value);
     payload += `${command.id}${value}`;
   });
-  return payload;
+
+  return getEncodePayload(payload, options);
 }

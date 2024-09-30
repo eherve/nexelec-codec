@@ -1,6 +1,6 @@
 {
-  "name": "nexelec-rise-codec",
-  "version": "5.0.0",
+  "name": "nexelec-codec",
+  "version": "1.0.0",
   "description": "",
   "main": "./lib/main.js",
   "types": "./lib/main.d.ts",
