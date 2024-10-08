@@ -421,13 +421,13 @@ export function decodeUplink(data: string, options: DecodeOptions = {encoding: '
 }
 
 // temperature-historical-data
-console.log(decodeUplink('qgMYBDhuG4diCKIn', {encoding: 'base64'}));
+// console.log(decodeUplink('qgMYBDhuG4diCKIn', {encoding: 'base64'}));
 
 // periodic-data
-console.log(decodeUplink('qgGGICCnv/7/v79+ADg=', {encoding: 'base64'}));
+// console.log(decodeUplink('qgGGICCnv/7/v79+ADg=', {encoding: 'base64'}));
 
 // product status
-console.log(decodeUplink('qgUIGyzkASSAAfScQA==', {encoding: 'base64'}));
+console.log(decodeUplink('qgUIGy0EASSYAfScQA==', {encoding: 'base64'}));
 
 // product-configuration
-console.log(decodeUplink('qgYvozISwGN59FYIQMMSR0g=', {encoding: 'base64'}));
+// console.log(decodeUplink('qgYvozISwGN59FYIQMMSR0g=', {encoding: 'base64'}));

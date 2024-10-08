@@ -1,6 +1,7 @@
 /** @format */
 
 export type DownlinkId =
+  | '01'
   | '03'
   | '04'
   | '05'
@@ -70,6 +71,12 @@ export type DownlinkCommand =
   | NumberDownlinkCommand;
 
 export const DownlinkCommands: DownlinkCommand[] = [
+  {
+    id: '01',
+    name: 'Demande d’envoi forcé de la configuration du produit',
+    valueByteSize: 0,
+    valueType: 'command',
+  },
   {
     id: '03',
     name: 'Activation / Désactivation de l’indicateur lumineux LED CO2',
