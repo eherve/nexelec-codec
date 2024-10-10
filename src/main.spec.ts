@@ -17,14 +17,19 @@ import {
   NumberDownlinkCommand,
 } from './downlink-command';
 import {hexToBase64} from './tools';
-import { decodeUplink } from './uplink';
 
 function commandValidation(command: CommandDownlinkCommand) {
   describe('Décode', () => {
     it(`Valide`, () => {
-      const decoded = decodeDownlink(`55${command.id}01`);
-      expect(decoded).to.be.an('array').that.have.lengthOf(1);
-      expect(decoded[0]).to.have.property('value').that.equal(1);
+      if (command.valueByteSize) {
+        const decoded = decodeDownlink(`55${command.id}01`);
+        expect(decoded).to.be.an('array').that.have.lengthOf(1);
+        expect(decoded[0]).to.have.property('value').that.equal(1);
+      } else {
+        const decoded = decodeDownlink(`55${command.id}`);
+        expect(decoded).to.be.an('array').that.have.lengthOf(1);
+        expect(decoded[0]).to.have.property('value').that.equal(null);
+      }
     });
     it(`Invalid throw`, () => {
       expect(() => decodeDownlink(`55${command.id}00`)).to.throw();
@@ -155,7 +160,7 @@ function downlinkCommandValidation(command: DownlinkCommand) {
 function getCommandValue(command: DownlinkCommand): {value: any; hexValue: string} {
   switch (command.valueType) {
     case 'command':
-      return {value: 1, hexValue: '01'};
+      return command.valueByteSize ? {value: 1, hexValue: '01'} : {value: null, hexValue: ''};
     case 'boolean':
       return {value: true, hexValue: '01'};
     case 'number':
@@ -216,6 +221,5 @@ describe('Nexelecx Codec', () => {
       });
     });
   });
-  describe('Uplink', () => {
-  });
+  describe('Uplink', () => {});
 });

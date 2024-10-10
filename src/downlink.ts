@@ -42,7 +42,7 @@ function getCommandValue(command: DownlinkCommand, rawValue: string) {
   if (isNaN(intValue)) throw new Error(`invalid command "${command.id}" value : "${rawValue}"`);
   switch (command.valueType) {
     case 'command':
-      if (intValue === 1) return 1;
+      if (command.valueByteSize && intValue === 1) return 1;
       throw new Error(`invalid command "${command.id}" value : "${rawValue}" is a valid command`);
     case 'boolean':
       if (intValue === 0) return false;
@@ -70,13 +70,13 @@ function getCommandValue(command: DownlinkCommand, rawValue: string) {
   }
 }
 
-function buildDecodedValue(command: DownlinkCommand, value: boolean | number): DecodedDownlinkValue {
+function buildDecodedValue(command: DownlinkCommand, value: boolean | number | null): DecodedDownlinkValue {
   switch (command.valueType) {
     case 'command':
       return {
         id: command.id,
         name: command.name,
-        value: 1,
+        value,
       } as CommandDecodedDownlinkValue;
     case 'boolean':
       return {
@@ -119,7 +119,10 @@ export function decodeDownlink(data: string, options: DecodeOptions = {encoding:
   while (index < payload.length) {
     const command = getCommand(payload.substring(index, index + 2));
     index += 2;
-    const value = getCommandValue(command, payload.substring(index, index + command.valueByteSize * 2));
+    let value = null;
+    if (command.valueByteSize) {
+      value = getCommandValue(command, payload.substring(index, index + command.valueByteSize * 2));
+    }
     index += command.valueByteSize * 2;
     decoded.push(buildDecodedValue(command, value));
   }
@@ -129,7 +132,7 @@ export function decodeDownlink(data: string, options: DecodeOptions = {encoding:
 function getHexCommandValue(command: DownlinkCommand, value: any): string {
   switch (command.valueType) {
     case 'command':
-      return '01';
+      return value === null ? '' : '01';
     case 'boolean':
       if (typeof value !== 'boolean') {
         throw new Error(`invalid command ${command.id} value: "${value}"`);
